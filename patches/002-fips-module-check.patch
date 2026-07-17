@@ -1,0 +1,25 @@
+diff --git a/src/crypto/internal/fips140deps/godebug/godebug.go b/src/crypto/internal/fips140deps/godebug/godebug.go
+index 22bda7ad4b..4d22e59cd4 100644
+--- a/src/crypto/internal/fips140deps/godebug/godebug.go
++++ b/src/crypto/internal/fips140deps/godebug/godebug.go
+@@ -19,6 +19,18 @@ func (s *Setting) Value() string {
+ 	return (*godebug.Setting)(s).Value()
+ }
+ 
++func init() {
++       // If the host requires FIPS but this binary has no FIPS module
++       // (built with GOFIPS140=off), crash immediately. A binary without
++       // the FIPS module cannot be made compliant at runtime.
++       v := godebug.New("#fips140").Value()
++       if (v == "" || v == "off") && hostfips.Enabled() {
++               panic("fips140: host has FIPS mode enabled " +
++                       "(/proc/sys/crypto/fips_enabled) but this binary was " +
++                       "built with GOFIPS140=off and contains no FIPS module")
++       }
++}
++
+ func Value(name string) string {
+ 	v := godebug.New(name).Value()
+ 	// When fips140=auto is set, check host FIPS mode and resolve to
+-- 
+2.55.0
