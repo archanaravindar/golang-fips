@@ -67,13 +67,6 @@ run_native_fips_test_suite() {
     if [[ "$suite" == "crypto" ]]; then
       notify_running ${mode} "crypto-native-fips"
       quiet pushd ${GOROOT}/src/crypto
-echo "=== Listing packages ==="
-  GOLANG_NATIVE_HOSTFIPS_OVERRIDE=1 $GO list crypto/... | grep -v tls > /tmp/pkgs.txt || true
-  cat /tmp/pkgs.txt
-  echo "=== Building test binary ==="
-  GOLANG_NATIVE_HOSTFIPS_OVERRIDE=1 $GO test -c -o /tmp/cryptotest crypto/sha256 || echo "go test -c failed"
-  echo "=== Running test binary ==="
-  GOLANG_NATIVE_HOSTFIPS_OVERRIDE=1 /tmp/cryptotest -test.run '^$' || echo "test binary failed"
 
       GOLANG_NATIVE_HOSTFIPS_OVERRIDE=1 \
         $GO test -count=1 $($GO list ./... | grep -v tls) $VERBOSE
