@@ -1,0 +1,18 @@
+diff --git a/src/crypto/internal/fips140deps/godebug/godebug.go b/src/crypto/internal/fips140deps/godebug/godebug.go
+index 22bda7ad4b..3a09b05634 100644
+--- a/src/crypto/internal/fips140deps/godebug/godebug.go
++++ b/src/crypto/internal/fips140deps/godebug/godebug.go
+@@ -29,5 +29,10 @@ func Value(name string) string {
+ 		}
+ 		return ""
+ 	}
++	 if name == "#fips140" && (v == "" || v == "off") && hostfips.Enabled() {
++          panic("fips140: host has FIPS mode enabled " +
++              "(/proc/sys/crypto/fips_enabled) but this binary was " +
++              "built with GOFIPS140=off and contains no FIPS module")
++         }
+ 	return v
+ }
+-- 
+2.55.0
+
