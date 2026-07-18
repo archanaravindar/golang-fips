@@ -75,12 +75,12 @@ run_native_fips_test_suite() {
   strings $($GO env GOROOT)/bin/go | grep "fips140=" || echo "no fips140= string found in go binary"
 
       GOLANG_NATIVE_HOSTFIPS_OVERRIDE=1 \
-        $GO test -count=1 $($GO list ./... | grep -v tls) $VERBOSE
+        GOFIPS140=certified $GO test -count=1 $($GO list ./... | grep -v tls) $VERBOSE
       quiet popd
     elif [[ "$suite" == "tls" ]]; then
       notify_running ${mode} "tls-native-fips"
       quiet pushd ${GOROOT}/src
-      GOLANG_NATIVE_HOSTFIPS_OVERRIDE=1 \
+      GOFIPS140=certified GOLANG_NATIVE_HOSTFIPS_OVERRIDE=1 \
         $GO test -count=1 crypto/tls -run "^TestBoring" $VERBOSE
       quiet popd
     fi
